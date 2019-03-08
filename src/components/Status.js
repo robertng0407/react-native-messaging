@@ -34,26 +34,25 @@ export default class Status extends Component {
 
     handleChange = isConnected => {
         this.setState({ isConnected });
+
+        StatusBar.setBarStyle(
+            isConnected ? 'dark-content' : 'light-content'
+        );
+
+        StatusBar.setBackgroundColor(
+            isConnected ? 'white' : 'red'
+        );
     }
 
     render() {
         const { isConnected } = this.state;
         const backgroundColor = isConnected ? 'white' : 'red';
 
-        const statusBar = (
-            <StatusBar
-                backgroundColor={backgroundColor}
-                barStyle={isConnected ? 'dark-content' : 'light-content'}
-                animated={false}
-            />
-        );
-
         const messageContainer = (
             <View
                 style={styles.messageContainer}
                 pointerEvents={'none'}
             >
-                {statusBar}
                 {!isConnected && (
                     <View style={styles.bubble}>
                         <Text style={styles.text}>No network connection</Text>
