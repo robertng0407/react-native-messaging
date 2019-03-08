@@ -14,6 +14,28 @@ export default class Status extends Component {
         isConnected: null
     }
 
+    async componentWillMount() {
+        NetInfo.isConnected.addEventListener(
+            'connectionChange',
+            this.handleChange
+        );
+
+        const isConnected = await NetInfo.isConnected.fetch();
+
+        this.setState({ isConnected });
+    }
+
+    componentWillUnmount() {
+        NetInfo.isConnected.removeEventListener(
+            'connectionChange',
+            this.handleChange
+        );
+    }
+
+    handleChange = isConnected => {
+        this.setState({ isConnected });
+    }
+
     render() {
         const { isConnected } = this.state;
         const backgroundColor = isConnected ? 'white' : 'red';
