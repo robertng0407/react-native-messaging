@@ -4,7 +4,8 @@ import {
   View,
   Alert,
   Image,
-  TouchableHighlight
+  TouchableHighlight,
+  BackHandler
 } from 'react-native';
 
 import Status from './src/components/Status';
@@ -27,6 +28,23 @@ export default class App extends React.Component {
       })
     ],
     fullscreenImageId: null
+  }
+
+  componentWillMount() {
+    this.subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      const { fullscreenImageId } = this.state;
+
+      if (fullscreenImageId) {
+        this.dismissFullscreenImage();
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  componentWillUnmount() {
+    this.subscription.remove();
   }
 
   dismissFullscreenImage = () => {
