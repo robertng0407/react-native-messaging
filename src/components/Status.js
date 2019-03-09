@@ -38,9 +38,11 @@ export default class Status extends Component {
         StatusBar.setBarStyle(
             isConnected ? 'dark-content' : 'light-content'
         );
-
-        StatusBar.setBackgroundColor(
-            isConnected ? 'white' : 'red'
+        
+        Platform.OS === 'android' && (
+            StatusBar.setBackgroundColor(
+                isConnected ? 'white' : 'red'
+            )
         );
     }
 
