@@ -28,7 +28,7 @@ export default class MessageList extends Component {
         const { onPressMessage } = this.props;
 
         return (
-            <View key={item.id} style={styles.messageRow}>
+            <View style={styles.messageRow}>
                 <TouchableOpacity onPress={() => onPressMessage(item)}>
                     {this.renderMessageBody(item)}
                 </TouchableOpacity>
