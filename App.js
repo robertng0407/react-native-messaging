@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import Status from './src/components/Status';
+import Toolbar from './src/components/Toolbar';
 import MessageList from './src/components/MessageList';
 import {
   createImageMessage,
@@ -27,6 +28,7 @@ export default class App extends React.Component {
         longitude: -122.4324
       })
     ],
+    isInputFocused: false,
     fullscreenImageId: null
   }
 
@@ -49,6 +51,26 @@ export default class App extends React.Component {
 
   dismissFullscreenImage = () => {
     this.setState({ fullscreenImageId: null });
+  }
+
+  handlePressToolbarCamera = () => {
+
+  }
+
+  handlePressToolbarLocation = () => {
+
+  }
+
+  handleChangeFocus = isFocused => {
+    this.setState({ isInputFocused: isFocused });
+  }
+
+  handleSubmit = text => {
+    const { messages } = this.state;
+
+    this.setState({
+      messages: [createTextMessage(text), ...messages]
+    });
   }
 
   renderFullscreenImage = () => {
@@ -98,7 +120,10 @@ export default class App extends React.Component {
         );
         break;
       case 'image':
-        this.setState({ fullscreenImageId: id });
+        this.setState({
+          fullscreenImageId: id,
+          isInputFocused: false
+        });
         break;
       default: break;
     }
@@ -124,8 +149,18 @@ export default class App extends React.Component {
   }
 
   renderToolbar() {
+    const { isInputFocused } = this.state;
+
     return (
-      <View style={styles.toolbar}></View>
+      <View style={styles.toolbar}>
+        <Toolbar
+          isFocused={isInputFocused}
+          onSubmit={this.handleSubmit}
+          onChangeFocus={this.handleChangeFocus}
+          onPressCamera={this.handlePressToolbarCamera}
+          onPressLocation={this.handlePressToolbarLocation}
+        />
+      </View>
     );
   }
 
