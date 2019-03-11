@@ -39,6 +39,12 @@ export default class Toolbar extends Component {
         text: ''
     }
 
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.isFocused !== this.props.isFocused) {
+            nextProps.isFocused ? this.input.focus() : this.input.blur();
+        }
+    }
+
     handleChangeText = text => this.setState({ text });
 
     handleSubmitEditing = () => {
@@ -49,6 +55,18 @@ export default class Toolbar extends Component {
 
         onSubmit(text);
         this.setState({ text: '' });
+    }
+
+    setInputRef = ref => this.input = ref;
+
+    handleFocus = () => {
+        const { onChangeFocus } = this.props;
+        onChangeFocus(true);
+    }
+
+    handleBlur = () => {
+        const { onChangeFocus } = this.props;
+        onChangeFocus(false);
     }
 
     render() {
@@ -68,6 +86,9 @@ export default class Toolbar extends Component {
                         value={text}
                         onChangeText={this.handleChangeText}
                         onSubmitEditing={this.handleSubmitEditing}
+                        ref={this.setInputRef}
+                        onFocus={this.handleFocus}
+                        onBlur={this.handleBlur}
                     />
                 </View>
             </View>
