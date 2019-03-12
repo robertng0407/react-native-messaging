@@ -39,6 +39,8 @@ export default class Toolbar extends Component {
         text: ''
     }
 
+    setInputRef = ref => this.input = ref;
+
     componentWillReceiveProps(nextProps) {
         if (nextProps.isFocused !== this.props.isFocused) {
             nextProps.isFocused ? this.input.focus() : this.input.blur();
@@ -56,8 +58,6 @@ export default class Toolbar extends Component {
         onSubmit(text);
         this.setState({ text: '' });
     }
-
-    setInputRef = ref => this.input = ref;
 
     handleFocus = () => {
         const { onChangeFocus } = this.props;

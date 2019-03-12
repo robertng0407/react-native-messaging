@@ -11,6 +11,7 @@ import {
 import Status from './src/components/Status';
 import Toolbar from './src/components/Toolbar';
 import MessageList from './src/components/MessageList';
+import ImageGrid from './src/components/ImageGrid';
 import {
   createImageMessage,
   createLocationMessage,
@@ -158,7 +159,9 @@ export default class App extends React.Component {
 
   renderInputMethodEditor() {
     return (
-      <View style={styles.inputMethodEditor}></View>
+      <View style={styles.inputMethodEditor}>
+        <ImageGrid />
+      </View>
     );
   }
 
