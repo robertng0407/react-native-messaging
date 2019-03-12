@@ -21,6 +21,9 @@ export default class ImageGrid extends Component {
         onPressImage: () => { }
     }
 
+    loading = false;
+    cursor = null;
+
     state = {
         images: []
     }
@@ -29,7 +32,7 @@ export default class ImageGrid extends Component {
         this.getImages();
     }
 
-    getImages = async () => {
+    getImages = async after => {
         const { status } = await Permissions.askAsync(
             Permissions.CAMERA_ROLL
         );
@@ -39,19 +42,33 @@ export default class ImageGrid extends Component {
             return;
         }
 
+        if (this.loading) return;
+        this.loading = true;
+
         const results = await CameraRoll.getPhotos({
-            first: 20
+            first: 20,
+            after
         });
 
-        const { edges } = results;
+        const {
+            edges,
+            page_info: { has_next_page, end_cursor }
+        } = results;
 
         const loadedImages = edges.map(item => item.node.image);
 
-        this.setState({ images: loadedImages });
+        this.setState({
+            images: this.state.images.concat(loadedImages)
+        }, () => {
+            this.loading = false;
+            this.cursor = has_next_page ? end_cursor : null;
+        });
     }
 
     getNextImages = () => {
+        if (!this.cursor) return;
 
+        this.getImages(this.cursor);
     }
 
     renderItem = ({ item: { uri }, size, marginTop, marginLeft }) => {
