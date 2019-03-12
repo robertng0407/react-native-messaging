@@ -5,6 +5,7 @@ import {
     TouchableOpacity
 } from 'react-native';
 import React, { Component } from 'react';
+import { Permissions } from 'expo';
 import PropTypes from 'prop-types';
 
 import Grid from '../UI/Grid';
@@ -21,12 +22,36 @@ export default class ImageGrid extends Component {
     }
 
     state = {
-        images: [
-            { uri: 'https://picsum.photos/600/600?image=10' },
-            { uri: 'https://picsum.photos/600/600?image=20' },
-            { uri: 'https://picsum.photos/600/600?image=30' },
-            { uri: 'https://picsum.photos/600/600?image=40' }
-        ]
+        images: []
+    }
+
+    componentDidMount() {
+        this.getImages();
+    }
+
+    getImages = async () => {
+        const { status } = await Permissions.askAsync(
+            Permissions.CAMERA_ROLL
+        );
+
+        if (status !== 'granted') {
+            console.log('Camera roll permissions denied');
+            return;
+        }
+
+        const results = await CameraRoll.getPhotos({
+            first: 20
+        });
+
+        const { edges } = results;
+
+        const loadedImages = edges.map(item => item.node.image);
+
+        this.setState({ images: loadedImages });
+    }
+
+    getNextImages = () => {
+
     }
 
     renderItem = ({ item: { uri }, size, marginTop, marginLeft }) => {
@@ -50,6 +75,7 @@ export default class ImageGrid extends Component {
                 data={images}
                 renderItem={this.renderItem}
                 keyExtractor={keyExtractor}
+                onEndReached={this.getNextImages}
             />
         );
     }
