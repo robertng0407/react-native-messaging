@@ -29,4 +29,49 @@ export default class KeyboardState extends Component {
             keyboardAnimationDuration: INITIAL_ANIMATION_DURATION
         }
     }
+
+    componentWillMount() {
+        if (Platform.OS === 'ios') {
+            this.subscriptions = [
+                Keyboard.addListener('KeyboardWillShow', this.keyboardWillShow),
+                Keyboard.addListener('KeyboardWillHide', this.keyboardWillHide),
+                Keyboard.addListener('keyboardDidShow', this.keyboardDidShow),
+                Keyboard.addListener('keyboardDidHide', this.keyboardDidHide)
+            ];
+        } else {
+            this.subscriptions = [
+                Keyboard.addListener('keyboardDidHide', this.keyboardDidHide),
+                Keyboard.addListener('keyboardDidShow', this.keyboardDidShow)
+            ];
+        };
+    }
+
+    componentWillUnmount() {
+        this.subscriptions.forEach(subscription => subscription.remove());
+    }
+
+    keyboardWillShow = event => {
+        this.setState({ keyboardWillShow: true });
+        this.measure(event);
+    }
+
+    keyboardDidShow = event => {
+        this.setState({
+            keyboardWillShow: false,
+            keyboardVisible: true
+        });
+        this.measure(event);
+    }
+
+    keyboardWillHide = event => {
+        this.setState({ keyboardWillHide: true });
+        this.measure(event);
+    }
+
+    keyboardDidHide = () => {
+        this.setState({
+            keyboardWillHide: false,
+            keyboardVisible: false
+        })
+    }
 }
