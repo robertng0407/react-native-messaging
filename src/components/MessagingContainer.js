@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { isIphoneX } from 'react-native-iphone-x-helper';
 
 if (
     Platform.OS === 'android' &&
@@ -98,6 +99,12 @@ export default class MessagingContainer extends Component {
             keyboardWillHide
         } = this.props;
 
+        const keyboardIsHidden = inputMethod === INPUT_METHOD.none &&
+            !keyboardWillShow;
+
+        const keyboardIsHiding = inputMethod === INPUT_METHOD.KEYBOARD &&
+            keyboardWillHide;
+
         const useContentHeight = keyboardWillShow ||
             inputMethod === INPUT_METHOD.KEYBOARD;
 
@@ -109,7 +116,10 @@ export default class MessagingContainer extends Component {
             !keyboardWillShow;
 
         const inputStyle = {
-            height: showCustomInput ? keyboardHeight || 250 : 0
+            height: showCustomInput ? keyboardHeight || 250 : 0,
+            marginTop: isIphoneX() && (keyboardIsHidden || keyboardIsHiding)
+                ? 24
+                : 0
         };
 
         return (
