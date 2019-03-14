@@ -12,6 +12,11 @@ import Status from './src/components/Status';
 import Toolbar from './src/components/Toolbar';
 import MessageList from './src/components/MessageList';
 import ImageGrid from './src/components/ImageGrid';
+import KeyboardState from './src/UI/Keyboard/KeyboardState';
+import MeasureLayout from './src/UI/Keyboard/MeaureLayout';
+import MessagingContainer, {
+  INPUT_METHOD
+} from './src/components/MessagingContainer';
 import {
   createImageMessage,
   createLocationMessage,
@@ -30,7 +35,8 @@ export default class App extends React.Component {
       })
     ],
     isInputFocused: false,
-    fullscreenImageId: null
+    fullscreenImageId: null,
+    inputMethod: INPUT_METHOD.NONE
   }
 
   componentWillMount() {
@@ -55,7 +61,14 @@ export default class App extends React.Component {
   }
 
   handlePressToolbarCamera = () => {
+    this.setState({
+      isInputFocused: false,
+      inputMethod: INPUT_METHOD.CUSTOM
+    });
+  }
 
+  handleChangeInputMethod = inputMethod => {
+    this.setState({ inputMethod });
   }
 
   handlePressToolbarLocation = () => {
@@ -77,6 +90,7 @@ export default class App extends React.Component {
   }
 
   handlePressImage = uri => {
+    console.log(uri)
     const { messages } = this.state;
 
     this.setState({
@@ -168,13 +182,11 @@ export default class App extends React.Component {
     );
   }
 
-  renderInputMethodEditor() {
-    return (
-      <View style={styles.inputMethodEditor}>
-        <ImageGrid onPressImage={this.handlePressImage} />
-      </View>
-    );
-  }
+  renderInputMethodEditor = () => (
+    <View style={styles.inputMethodEditor}>
+      <ImageGrid onPressImage={this.handlePressImage} />
+    </View>
+  )
 
   renderToolbar() {
     const { isInputFocused } = this.state;
@@ -193,12 +205,28 @@ export default class App extends React.Component {
   }
 
   render() {
+    const { inputMethod } = this.state;
+
     return (
       <View style={styles.container}>
         <Status />
-        {this.renderMessageList()}
-        {this.renderToolbar()}
-        {this.renderInputMethodEditor()}
+        <MeasureLayout>
+          {layout => (
+            <KeyboardState layout={layout}>
+              {keyboardInfo => (
+                <MessagingContainer
+                  {...keyboardInfo}
+                  inputMethod={inputMethod}
+                  onChangeInputMethod={this.handleChangeInputMethod}
+                  renderInputMethodEditor={this.renderInputMethodEditor}
+                >
+                  {this.renderMessageList()}
+                  {this.renderToolbar()}
+                </MessagingContainer>
+              )}
+            </KeyboardState>
+          )}
+        </MeasureLayout>
         {this.renderFullscreenImage()}
       </View>
     );
