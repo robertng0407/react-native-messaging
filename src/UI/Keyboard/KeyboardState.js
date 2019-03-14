@@ -50,6 +50,20 @@ export default class KeyboardState extends Component {
         this.subscriptions.forEach(subscription => subscription.remove());
     }
 
+    measure = event => {
+        const { layout } = this.props;
+        const {
+            endCoordinates: { height, screenY },
+            duration = INITIAL_ANIMATION_DURATION
+        } = event;
+
+        this.setState({
+            contentHeight: screenY - layout.y,
+            keyboardHeight: height,
+            keyboardAnimationDuration: duration
+        });
+    }
+
     keyboardWillShow = event => {
         this.setState({ keyboardWillShow: true });
         this.measure(event);
@@ -73,5 +87,27 @@ export default class KeyboardState extends Component {
             keyboardWillHide: false,
             keyboardVisible: false
         })
+    }
+
+    render() {
+        const {children, layout} = this.props;
+        const {
+            contentHeight,
+            keyboardHeight,
+            keyboardVisible,
+            keyboardWillShow,
+            keyboardWillHide,
+            keyboardAnimationDuration
+        } = this.state;
+
+        return children({
+            containerHeight: layout.height,
+            contentHeight,
+            keyboardHeight,
+            keyboardVisible,
+            keyboardWillShow,
+            keyboardWillHide,
+            keyboardAnimationDuration
+        });
     }
 }
